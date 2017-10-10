@@ -27,13 +27,12 @@ public class Expression  {
 		for (i = 0 ; i < expressionString.length(); i++){
 			char c = expressionString.charAt(i);
 			
-			if ( c = '+'){
+			if ( c == "+"){
 				
 			}
 			
 			token.append(expressionString.equals("+")||expressionString.equals("-")||expressionString.equals("("));
 			
-			//testing github
 			
 		}
 		
