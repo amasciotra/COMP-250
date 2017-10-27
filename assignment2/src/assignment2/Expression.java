@@ -25,21 +25,62 @@ public class Expression  {
 		//ADD YOUR CODE BELOW HERE
 		int i; //i will go through each element
 		for (i = 0 ; i < expressionString.length(); i++){
-			char c = expressionString.charAt(i);
 			
-			if ( c = '+'){
+
+
+			if (Character.isDigit(expressionString.charAt(i)) == true){
+
+				token.append(expressionString.charAt(i));
+
+
+				while (Character.isDigit(expressionString.charAt(i+1)) == true ){
+					token.append(expressionString.charAt(i+1));
+					i++;
+				}
 				
+				tokenList.add(token.toString());
+				token.delete(0, token.length());
+				
+
 			}
+
+
+			else if (expressionString.charAt(i) == ' '){
+				continue;
+
+			}
+
+
+
+			else if (expressionString.charAt(i) == '*' || expressionString.charAt(i) == '/' || 
+					expressionString.charAt(i) == '(' || expressionString.charAt(i) == ')' || 
+					expressionString.charAt(i) == '[' || expressionString.charAt(i) == ']'){
+				token.append(expressionString.charAt(i));
+				tokenList.add(token.toString());
+				token.delete(0, token.length());
+
+			}
+
+
+			else if (expressionString.charAt(i) == '+' || expressionString.charAt(i) == '-'){
+				token.append(expressionString.charAt(i));
+				if (expressionString.charAt(i+1) == expressionString.charAt(i)){
+					token.append(expressionString.charAt(i+1));	
+					i++;
+				}
+				tokenList.add(token.toString());
+				token.delete(0, token.length());
+				
+				
+
+			}	
 			
-			token.append(expressionString.equals("+")||expressionString.equals("-")||expressionString.equals("("));
-			
-			//testing github
-			
+
+
 		}
-		
-		
 		//ADD YOUR CODE ABOVE HERE
 	}
+	
 
 	/**
 	 * This method evaluates the expression and returns the value of the expression
@@ -53,13 +94,99 @@ public class Expression  {
 		
 		//ADD YOUR CODE BELOW HERE
 		//..
+		
+
+		int i;
+
+		for (i = 0 ; i < tokenList.size(); i++){ 
+
+			if (isInteger(tokenList.get(i)) == true){
+
+				valueStack.push(Integer.parseInt(tokenList.get(i)));			
+
+			}
+			//attempt number 2 at this eval	
+			else if (tokenList.get(i).equals("+") || tokenList.get(i).equals("++") ||
+					tokenList.get(i).equals("-") || tokenList.get(i).equals("--") || tokenList.get(i).equals("*") ||
+					tokenList.get(i).equals("/")){// || tokenList.get(i).equals("]")){
+
+				operatorStack.push(tokenList.get(i));
+
+			}
+
+			else if (tokenList.get(i).equals("(") || tokenList.get(i).equals("[")){
+				continue;
+			}
+			else if(tokenList.get(i).equals(")")){
+				if(!operatorStack.isEmpty()){
+
+					compute(valueStack,operatorStack);
+				}
+			}
+			else if (tokenList.get(i).equals("]")){
+
+				Integer num2 = valueStack.pop();
+				if (num2 < 0){
+					num2 = -num2;				
+
+				}
+
+				valueStack.push(num2);
+
+
+
+			}	
+
+		}// close of for loop
+
+
+
 		//..
 		//ADD YOUR CODE ABOVE HERE
 
-		return null;   // DELETE THIS LINE
+		return valueStack.pop();
 	}
 
 	//Helper methods
+
+	// adding compute helper method
+
+	private static void compute ( Stack<Integer> valueStack, Stack<String> operatorStack ){
+
+
+		String operator = operatorStack.pop();// pops operator on peek of operator stack
+		Integer result = 0; // initialize result
+
+		if ("+".equals(operator)){
+			Integer num2 = valueStack.pop(); //number on peek of stack
+			Integer num1 = valueStack.pop(); //number under peek
+			result = num1 + num2;
+		}else if ("-".equals(operator)){	
+			Integer num2 = valueStack.pop(); //number on peek of stack
+			Integer num1 = valueStack.pop(); //number under peek
+			result = num1 - num2;
+		}else if ("++".equals(operator)){
+			Integer num2 = valueStack.pop(); //number on peek of stack
+			result = ++num2;
+		}else if ("--".equals(operator)){
+			Integer num2 = valueStack.pop(); //number on peek of stack
+			result = --num2;
+		}else if ("*".equals(operator)){
+			Integer num2 = valueStack.pop(); //number on peek of stack
+			Integer num1 = valueStack.pop(); //number under peek
+			result = num1 * num2;			
+		}else if ("/".equals(operator)){
+			Integer num2 = valueStack.pop(); //number on peek of stack
+			Integer num1 = valueStack.pop(); //number under peek
+			result = num1 / num2;
+		}
+
+
+		valueStack.push(result);
+	}
+
+
+	
 	/**
 	 * Helper method to test if a string is an integer
 	 * Returns true for strings of integers like "456"
