@@ -2,6 +2,7 @@ package hashMap;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 
 class MyHashTable<K,V> {
@@ -39,8 +40,14 @@ class MyHashTable<K,V> {
 	MyHashTable(int numBuckets) {
 
 		//  ADD YOUR CODE BELOW HERE
-
-
+		this.numBuckets = numBuckets;  //setting number of buckets in Hash Table
+		this.buckets= new ArrayList<HashLinkedList<K,V>>(numBuckets); //instantiate hash table
+		
+		for(int i=0; i< numBuckets; i++){
+			this.buckets.add(new HashLinkedList<K,V>()); //going through and instantiating all buckets
+		}
+		
+		
 		//  ADD YOUR CODE ABOVE HERE
 
 	}
@@ -86,10 +93,41 @@ class MyHashTable<K,V> {
 	public  V  put(K key, V value) {
 
 		//  ADD YOUR CODE BELOW HERE
+		int hashkey = hashFunction(key);
+		
+		HashLinkedList<K,V> tmpbucket = buckets.get(hashkey);
+		HashNode <K,V> node ;
+		V old;
+			if (this.containsKey(key) == true ){
+				
+				
+				node = tmpbucket.remove(key);
+				tmpbucket.add(key, value);
+				buckets.set(hashkey, tmpbucket);
+				old = node.getValue();
+				
+			}
+	
+			else {
+				tmpbucket.add(key, value);
+
+				buckets.set(hashkey, tmpbucket);
+				entryCount++;
+				old = null;
+			}
+		
+
+		double loadFactor = (double) entryCount / numBuckets;
+
+		if (loadFactor > MAX_LOAD_FACTOR) {
+			rehash();
+		}
 
 		//  ADD YOUR CODE ABOVE HERE
-		return null;
+		return old;
 	}
+	
+	
 
 	/**
 	 * Retrieves a value associated with some given key in the hash table.
@@ -98,12 +136,34 @@ class MyHashTable<K,V> {
 	public V get(K key) {
 
 		//  ADD YOUR CODE BELOW HERE
-
-
-		//  ADD YOUR CODE ABOVE HERE
-
-		return null;
+		int bucketPosition = hashFunction(key);
+		HashLinkedList<K,V> tmpbucket = buckets.get(bucketPosition);
+		
+		HashNode<K,V> node;
+		
+		
+		if( this.containsKey(key) != true){
+			
+			return null;
+			
+		}else{
+			node = tmpbucket.getListNode(key);
+			return node.getValue();
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
+
+
 
 	/**
 	 * Removes a key-value pair from the hash table.
@@ -112,12 +172,31 @@ class MyHashTable<K,V> {
 	public V remove(K key) {
 
 		//  ADD YOUR CODE BELOW HERE
+		
 
+		int hashCode = hashFunction(key);
+		HashLinkedList<K,V> tmp = buckets.get(hashCode);
+		HashNode <K,V> node;
+		
+		if (this.containsKey(key) == true){
+			
+			node = tmp.getListNode(key);
+			tmp.remove(key);
+			entryCount--;
+			return node.getValue();
+		}
+		else{
+			return null;
+		}
+		
+		
+		
+		
 
 		//  ADD  YOUR CODE ABOVE HERE
 
-		return(null);
 	}
+	
 
 	/*
 	 *  This method is used for testing rehash().  Normally one would not provide such a method. 
@@ -155,7 +234,25 @@ class MyHashTable<K,V> {
 	public void rehash()
 	{
 		//   ADD YOUR CODE BELOW HERE
-
+	
+		HashNode<K,V> node;
+		HashIterator hashIterator = new HashIterator();
+				
+		this.entryCount = 0;
+		int newNumBuckets = getNumBuckets()*2;
+		this.numBuckets = newNumBuckets;
+		this.buckets = new ArrayList<HashLinkedList<K, V>>(numBuckets);
+		
+		for(int i = 0 ; i < this.numBuckets; i++){
+			this.buckets.add(new HashLinkedList<K,V>());
+			
+		}
+		while (hashIterator.hasNext()){
+			node = hashIterator.next();
+			put ( node.getKey(), node.getValue());
+		}
+		
+		
 		//   ADD YOUR CODE ABOVE HERE
 
 	}
@@ -185,13 +282,21 @@ class MyHashTable<K,V> {
 		ArrayList<K>  listKeys = new ArrayList<K>();
 
 		//   ADD YOUR CODE BELOW HERE
+		MyHashTable<K, V>.HashIterator iter = this.iterator();
+		
+		while (iter.hasNext()) {
+			HashNode<K,V> entry = iter.next();
+			listKeys.add(entry.getKey());
+		}
+
+		
 
 
 		//   ADD YOUR CODE ABOVE HERE
 
 
 
-		return null;   //  CODE STUB.   REMOVE THIS LINE.
+		return listKeys;
 	}
 
 	/*
@@ -202,12 +307,21 @@ class MyHashTable<K,V> {
 		ArrayList<V>  listValues = new ArrayList<V>();
 
 		//   ADD YOUR CODE BELOW HERE
+		MyHashTable<K, V>.HashIterator iter = this.iterator();
+		
+		while (iter.hasNext()) {
+			HashNode<K,V> entry = iter.next();
+			listValues.add(entry.getValue());
+			
+		}
+		
+		
 
 		//   ADD YOUR CODE ABOVE HERE
 
 
 
-		return null; //CODE STUB. REMOVE THIS LINE.
+		return listValues; 
 	}
 
 	@Override
@@ -242,7 +356,20 @@ class MyHashTable<K,V> {
 		{
 
 			//  ADD YOUR CODE BELOW HERE
-
+			HashNode <K,V> node;
+			this.allEntries = new HashLinkedList<K,V>();
+			HashLinkedList <K,V> list;
+			for (int i = 0; i < buckets.size(); i++){
+				list = buckets.get(i).copylist(buckets.get(i));
+				
+				while(list.isEmpty() != true){
+					node = list.removeFirst();
+					allEntries.add(node.getKey(), node.getValue());
+				}
+				
+				
+				
+			}
 
 			//  ADD YOUR CODE ABOVE HERE
 

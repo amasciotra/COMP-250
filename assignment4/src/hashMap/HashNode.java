@@ -19,6 +19,14 @@ public  class HashNode<K,V> implements Cloneable{
 	//ADD HELPER METHODS BELOW HERE
 
 	// Hint: Implement a  'Public' clone() method
+	
+public HashNode<K,V> clone(HashNode<K,V> element){
+		
+		HashNode<K,V> copy = new HashNode<K,V>(element.key, element.value);
+		
+		return copy;
+		
+	}
 
 	//ADD HELPER METHODS ABOVE HERE
 

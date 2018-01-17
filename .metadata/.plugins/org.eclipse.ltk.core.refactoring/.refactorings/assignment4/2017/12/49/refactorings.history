@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;oldValue&apos; in &apos;hashMap.MyHashTable.put(...)&apos; to &apos;old&apos;&#x0A;- Original project: &apos;assignment4&apos;&#x0A;- Original element: &apos;hashMap.MyHashTable.put(K, V).oldValue&apos;&#x0A;- Renamed element: &apos;oldValue&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;oldValue&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;hashMap{MyHashTable.java[MyHashTable~put~QK;~QV;@oldValue!2264!2274!2266!2273!QV;!0!false" name="old" references="true" stamp="1512419569621" version="1.0"/>
+</session>

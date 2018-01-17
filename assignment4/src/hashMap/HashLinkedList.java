@@ -24,7 +24,17 @@ public class HashLinkedList<K,V>{
 	 */
 
 	public void add(K key, V value){
+		
 		// ADD CODE BELOW HERE
+		HashNode<K,V> newNode = new HashNode<K,V> (key, value);
+		size++;
+		if (head == null){
+			head = newNode;		
+		}
+		else {
+			newNode.next = head;
+			head = newNode;
+		}		
 
 		// ADD CODE ABOVE HERE
 	}
@@ -36,9 +46,24 @@ public class HashLinkedList<K,V>{
 
 	public HashNode<K,V> getListNode(K key){
 		// ADD CODE BELOW HERE
+		
+		HashNode<K,V> tmp = head;
+		if (tmp==null){
+			return null;
+			
+		}while (!tmp.getKey().equals(key) && tmp.next != null){
+			tmp = tmp.next;
+			
+			
+		}
+		if (tmp.getKey().equals(key)){
+			return tmp;
+		}else {
+			return null;
+		}
+		
 
 		// ADD CODE ABOVE HERE
-		return null;//delete this after
 	}
 
 
@@ -49,9 +74,19 @@ public class HashLinkedList<K,V>{
 
 	public HashNode<K,V> removeFirst(){
 		// ADD CODE BELOW HERE
+		
+
+		if (head == null){
+			return null;	
+		}
+		HashNode<K,V> tmp = head;
+		head = tmp.next;
+		size --;
+		return tmp;
+
 
 		// ADD CODE ABOVE HERE
-		return null; //CODE STUB.. REMOVE THIS LINE
+	
 	}
 
 	/*
@@ -60,11 +95,30 @@ public class HashLinkedList<K,V>{
 
 	public HashNode<K,V> remove(K key){
 		// ADD CODE BELOW HERE
-
-		// ADD CODE ABOVE HERE
-		return null; // removing failed
+		//HashNode<K,V> tmp;
+		HashNode<K,V> tmp = head;
+		HashNode<K,V> remove = head;
+		
+		if(tmp.getKey().equals(key)){
+			return removeFirst();
+			
+		}
+		while (!tmp.next.getKey().equals(key) && tmp.next != null){
+			tmp = tmp.next;
+		}
+		if (tmp.next.getKey().equals(key)){
+			remove = tmp.next;
+			tmp.next = remove.next;
+			size--;
+			return remove;
+		}
+		else{
+			return null;
+		}
+		
+		
+		
 	}
-
 
 
 	/*
@@ -87,6 +141,27 @@ public class HashLinkedList<K,V>{
 	}
 
 	//ADD YOUR HELPER  METHODS BELOW THIS
+
+	//makes a cloned linkedlist using the clone nodes from HashNode file
+public HashLinkedList<K,V> copylist (HashLinkedList<K,V> list){
+		
+		HashLinkedList<K,V>  tmp= new HashLinkedList<K,V>();
+		HashNode<K,V> newCopynode = list.head;
+		HashNode <K,V> newNode;
+		
+		while(newCopynode != null){
+			
+	        newNode = newCopynode.clone(newCopynode);  
+	        tmp.add(newNode.getKey(), newNode.getValue());
+			newCopynode= newCopynode.next;
+		}
+		
+		return tmp;
+	
+	}
+
+
+
 
 
 	//ADD YOUR HELPER METHODS ABOVE THIS

@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
+import static java.lang.Integer.parseInt;
+import java.util.Iterator;
+import java.util.Random;
 /**
  * Class for testing your implementation of the HashTable class.
  */
@@ -24,8 +28,50 @@ public class HashTableTester {
 		return songs;
 	}
 
+        @SuppressWarnings("empty-statement")
 	public static void main(String[] args) {
 		ArrayList<Song> songs = initSongList();
+
+                String csvFile = "/Users/amasciotra/Documents/School University/Semester 3/COMP 250/COMP 250 WORKSPACE/assignment4/src/hashMap/Songs.csv";
+                BufferedReader br = null;
+                String line = "";
+                String cvsSplitBy = ",";
+
+                try 
+                {
+
+                        br = new BufferedReader(new FileReader(csvFile));
+                        while ((line = br.readLine()) != null) {
+
+                        // use comma as separator
+                            String[] song = line.split(cvsSplitBy);
+                            songs.add(new Song(song[0],song[1],parseInt(song[2])));
+                        }
+
+                }
+                catch (FileNotFoundException e) 
+                {
+                    e.printStackTrace();
+                } 
+                catch (IOException e) 
+                {
+                    e.printStackTrace();
+                }
+                finally 
+                {
+                    if (br != null) 
+                    {
+                        try 
+                        {
+                            br.close();
+                        } 
+                        catch (IOException e) 
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                
 		MyHashTable<String,Song> songTable;
 		int numBuckets = 7;
 		// Initialize the hash table.   Key will be the song title.
@@ -59,16 +105,44 @@ public class HashTableTester {
 		if (testSong1 == null || !testSong1.getArtist().equals("Black Flag") || testSong1.getYear() != 1984) {
 			errors.append("Failed to retrieve song 'Scream'.\n");
 		}
-
-		// Try to remove a song
-		Song removedSong = songTable.remove("Fallen Angel");
-		Song retrievedSong = songTable.get("Fallen Angel");
-		if (removedSong == null || !removedSong.getArtist().equals("King Crimson")
-				|| removedSong.getYear() != 1974 || retrievedSong != null) {
-			errors.append("Failed to remove song 'Fallen Angel'.\n");
-		}
+                
+                 System.out.print(songTable.keys() + "\n");
 
 		//   PUT MORE TESTS HERE.
+                
+                Song toChange = new Song("Fallen Angel", "Three Days Grace", 2015);
+                Song changed = songTable.get("Fallen Angel");
+                Song temp = songTable.put(toChange.getTitle(), toChange);
+                if (temp == null || !temp.getArtist().equals(changed.getArtist()) || temp.getYear() != changed.getYear()) errors.append("Failed to replace song 'Fallen Angel'.\n");
+                
+                songs.set(5, toChange);
+               // Try to remove a song
+                int songRemoved =0;
+                Random rand = new Random();
+                for(int i = 0; i < 10; i++)
+                {
+                    int songToRemove = rand.nextInt(songs.size()-1);
+                    Song toRemove = songs.remove(songToRemove);
+                    
+                    System.out.print("Song to remove: " + toRemove+ "\n");
+                    
+                    Song removedSong = songTable.remove(toRemove.getTitle());
+                    Song retrievedSong = songTable.get(toRemove.getTitle());
+                    songRemoved++;
+                    if (removedSong == null || !removedSong.getArtist().equals(toRemove.getArtist())
+				|| removedSong.getYear() != toRemove.getYear() || retrievedSong != null) {
+			errors.append("Failed to remove song " + toRemove.getTitle() + ".\n");
+                        System.out.print("Failed to remove song " + toRemove.getTitle() + ".\n");
+                        songRemoved--;
+                    }
+                }
+                
+                System.out.print("Songs Removed: " + songRemoved + "\n");
+                
+                System.out.println("number of songs: " + songTable.size());
+		System.out.println("number of buckets in hashtable: " + songTable.getNumBuckets());
+                
+              System.out.print(songTable.values() + "\n");
 
 		// Display the test results
 		System.out.println("---------------\nTEST 1 RESULTS:\n---------------\n");
